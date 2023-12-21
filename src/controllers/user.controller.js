@@ -8,8 +8,11 @@ import { ApiResponse } from "../utils/ApiResponse.js"
 const generateAccessTokenAndRefreshTokens = async(userId)=>{
     try {
         const user = await User.findById(userId);
+        // console.log(user);
         const accessToken = user.generateAccessToken()
         const refreshToken = user.generateRefreshToken()
+        // console.log(accessToken)
+        // console.log(refreshToken)
 
         user.refreshToken = refreshToken;
         await user.save({validateBeforeSave: false})
@@ -106,6 +109,7 @@ const loginUser = asyncHandler( async (req,res) => {
     //if false,redirect to login page with msg
 
     const {email,username,password} = req.body;
+    // console.log(email)
     
     if(!username && !email){
         throw new ApiError(400,"username or email is required");
@@ -130,6 +134,8 @@ const loginUser = asyncHandler( async (req,res) => {
     }
 
     const {accessToken,refreshToken} = await generateAccessTokenAndRefreshTokens(user._id);
+
+    // console.log(accessToken)
 
     const loggedInUser = await User.findById(user._id).select("-password -refreshToken");
 
